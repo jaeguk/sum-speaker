@@ -87,7 +87,7 @@ def gather_rss(keyword, max_count=20):
         if i >= max_count:
             break
 
-        print("link = {}".format(e['link']))
+        #print("link = {}".format(e['link']))
 
         try:
             res = get_article(e)
@@ -130,7 +130,7 @@ def get_article(que, seq, use_lexrank=False):
             article.parse()
             text = article.text
 
-            print("{}: {}".format(seq, e['title']))
+            #print("{}: {}".format(seq, e['title']))
             ##########################
             '''
             url = e['link']
@@ -138,7 +138,7 @@ def get_article(que, seq, use_lexrank=False):
             dat = link.read()
             dat = dat.decode('utf-8', 'backslashreplace')
             text = html2text(dat, url)
-    
+
             #print("dat={}, text= {}".format(dat, text))
             '''
             ##########################
@@ -175,7 +175,7 @@ def gather_rss_async(keyword, max_count=20):
     start_time = time.time()
 
     data = feedparser.parse(url)
-    print("url={}, data len={}".format(url, len(data.entries)))
+    #print("url={}, data len={}".format(url, len(data.entries)))
 
     keywords_list = []
 
