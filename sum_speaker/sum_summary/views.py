@@ -71,7 +71,11 @@ def search(request):
         keywords = Keyword.objects.filter(keyword=current_keyword).order_by('reg_date')
 
     for i, keyword in enumerate(keywords):
-        tts_for_text += "{} 번쨰 기사는 {} 입니다. \n ".format(order_text_dic[i], keyword.title)
+        order_text = "{}".format(i)
+        if i < len(order_text_dic):
+            order_text = order_text_dic[i]
+
+        tts_for_text += "{} 번쨰 기사는 {} 입니다. \n".format(order_text, keyword.title)
         tts_for_text += "{} . \n ".format(keyword.summary)
 
     tts_for_text += "  이상입니다.  들어 주셔서 감사합니다. \n "
@@ -90,7 +94,7 @@ def search(request):
     }
 
     return render(request, 'sum_summary/view.html', context)
-  
+
 
 @login_required
 def bookmark_list(request):

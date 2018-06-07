@@ -42,6 +42,8 @@ if jpype.isJVMStarted():
 _textrank = TextRank("test")
 #########################################
 
+SENTENCE_MAX_SIZE = 1000
+
 def summarize_text(text):
     # < workaround cooes > for crash problem with django and konlpy
     # - related issue : https://github.com/konlpy/konlpy/issues/104
@@ -50,7 +52,20 @@ def summarize_text(text):
     # < workaround codes end!!! >
 
     #print_with_timestamp("textrank init")
-    _textrank = TextRank(text)
+    #ignore_words = ["@newsworks.kr"]
+    ignore_words = []
+
+    _textrank = TextRank(text, ignore_words)
+
+    previous_sentence = ""
+    for s in _textrank.get_sentences():
+        if len(previous_sentence) > 0 and previous_sentence == s:
+            return ""
+        if len(s) > SENTENCE_MAX_SIZE:
+            return ""
+
+        previous_sentence = s
+
     #print_with_timestamp("textrank init end")
     return _textrank.summarize()
 
@@ -107,8 +122,8 @@ def gather_rss(keyword, max_count=20):
 
 def get_article(que, seq, use_lexrank=False):
     # boundary values
-    ARTICLE_SIZE_THRESHOLD = 100
-    retry_cnt = 3
+    ARTICLE_SIZE_THRESHOLD = 200
+    retry_cnt = 10
 
     while(retry_cnt > 0):
         retry_cnt -= 1
@@ -155,6 +170,10 @@ def get_article(que, seq, use_lexrank=False):
                 text_summary = summarize_text_with_lexrank(text)
             else:
                 text_summary = summarize_text(text)
+
+            if len(text_summary) == 0:
+                continue
+
             # 제목에서 [포토], [사진] 등의 문구 제거
             title = re.sub("\[.*\]", '', e['title'])
 
